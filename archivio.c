@@ -422,6 +422,8 @@ void * gestorebody(void *argv) {
       xtermina("Errore sigwait",qui);
     switch (s) {
       case SIGINT:
+        //blocco tutti i segnali per evitare di andare in deadlock
+        pthread_sigmask(SIG_BLOCK,&mask,NULL);
         //devo leggere la variabile globale in mutua esclusione perché sennò potrei leggerla mentre 
         //viene modificata da uno scrittore
         xpthread_mutex_lock(a->mutexhashtable, qui);
@@ -438,8 +440,12 @@ void * gestorebody(void *argv) {
         if(*(a->activereaders)==0 && *(a->waitingwriters)>0)
           xpthread_cond_signal(a->writego, qui);
         xpthread_mutex_unlock(a->mutexhashtable, qui);
+        //sblocco tutti i segnali per poterne ricevere altri
+        pthread_sigmask(SIG_UNBLOCK, &mask, NULL);
         break;
       case SIGTERM:
+        //blocco tutti i segnali per evitare di essere interrotto
+        pthread_sigmask(SIG_BLOCK,&mask,NULL);
         //attendo la terminazione dei capi
         xpthread_join(*(a->caporeader), NULL,qui);
         xpthread_join(*(a->capowriter), NULL,qui);
@@ -451,6 +457,8 @@ void * gestorebody(void *argv) {
         continua = 0;
         break;
       case SIGUSR1:
+        //blocco tutti i segnali per evitare di andare in deadlock
+        pthread_sigmask(SIG_BLOCK,&mask,NULL);
         xpthread_mutex_lock(a->mutexhashtable, qui);
         *(a->waitingwriters)+=1;
         while(*(a->activewriters)>0 || *(a->activereaders)>0)
@@ -471,6 +479,8 @@ void * gestorebody(void *argv) {
         else
           xpthread_cond_signal(a->writego, qui);
         xpthread_mutex_unlock(a->mutexhashtable, qui);
+        //sblocco tutti i segnali per riceverne altri
+        pthread_sigmask(SIG_UNBLOCK, &mask, NULL);
         break;
     }
   }
