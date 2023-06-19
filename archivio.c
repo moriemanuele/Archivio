@@ -258,7 +258,7 @@ void * capowritersbody(void *argv) {
     //effettuo la tokenizzazione
     char *token;
     char * deallocami = s;
-    while ((token = strtok_r(s, sep, &s))) {
+    while ((token = strtok_r(s, sep, &s))) { //esco quando token==NULL, quindi è terminata la tokenizzazione
       //token è la stringa delimitata. inserisco token dentro il buffer in mutua esclusione
       acquisisci_accesso_scrittura_buffer(a->mutexbufferw,a->datiwcapow,a->fullw);
       char *inseriscimi = strdup(token); 
@@ -272,7 +272,7 @@ void * capowritersbody(void *argv) {
   //sono uscito dal while, quindi comunico numw volte che non ho più nessun valore da mettere nel buffer w capow
   for(int i = 0;i< a->numw ;i++) {
       acquisisci_accesso_scrittura_buffer(a->mutexbufferw,a->datiwcapow,a->fullw);
-      a->bufferw[(ppindex ++) %PC_buffer_len] =NULL;
+      a->bufferw[(ppindex ++) %PC_buffer_len] = NULL;
       rilascia_accesso_scrittura_buffer(a->mutexbufferw,a->datiwcapow,a->emptyw);
   }
   //ho comunicato a tutti gli scrittori che devono terminare, dunque attendo la loro terminazione
@@ -470,7 +470,7 @@ void * gestorebody(void *argv) {
         distruggi_lista(*(a->testa_lista_entry));
         hdestroy();
         *(a->numeroentry)=0;
-        *(a->testa_lista_entry) = NULL; //forse mi leverai!!!
+        *(a->testa_lista_entry) = NULL; 
         *(a->hashtable) = hcreate(Num_elem);
         xpthread_mutex_lock(a->mutexhashtable, qui);
         *(a->activewriters)-=1;
@@ -489,12 +489,12 @@ void * gestorebody(void *argv) {
 
 int main(int argc, char **argv) {
   if (argc != 3)
-    xtermina("Inserisci il numero di lettori ed il numero di scrittori\n", qui);
+    xtermina("Inserisci il numero di scrittori ed il numero di lettori\n", qui);
   int numw = atoi(argv[1]);
   int numr = atoi(argv[2]);
 
   if(numw<=0 || numr<=0)
-    xtermina("I numer di thread lettori e di thread scrittori devono essere entrambi non negativi",qui);
+    xtermina("I numer di thread lettori e di thread scrittori devono essere entrambi strettamente positivi",qui);
 
   int hashtable = hcreate(Num_elem);
   if (hashtable == 0)
