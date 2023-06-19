@@ -14,7 +14,7 @@ Infine, ho deciso che nonostante la scrittura sulle pipe e sul file `server.log`
 Il modulo di logging è stato usato anche per gestire eventuali eccezioni.
 
 # client1 e client2
-I due programmi hanno un codice molto simile: entrambi prima spediscono il tipo di connessione, leggono da file usando la funzione `getline`, spediscono la dimensione della sequenza letta ed in seguito la sequenza stessa. Entrambi ricorrono a `writen` e `readn`, che per evitare di replicare codice sono dichiarate all'interno di `xerrori.c`.  `client1` una volta uscito dal while si mette in attesa di un intero, lo decodifica e verifica che sia uguale al numero di sequenze spedite.
+I due programmi hanno un codice molto simile: entrambi prima spediscono il tipo di connessione, leggono da file usando la funzione `getline`, spediscono la dimensione della sequenza letta ed in seguito la sequenza stessa. Entrambi ricorrono a `writen` e `readn`, che per evitare di replicare codice sono dichiarate all'interno di `xerrori.c`.  `client2` una volta uscito dal while si mette in attesa di un intero, lo decodifica e verifica che sia uguale al numero di sequenze spedite.
 
 # altro
 Le costanti usate in più programmi sono state dichiarate in `xerrori.h` in modo da non duplicare codice. Ho deciso di sfruttare le funzioni del file `xerrori.c` affinché l'utente possa avere una migliore comprensione di dove si è verificato un eventuale errore. L'implementazione dello schema per l'accesso alla tabella hash si basa sulla dispensa Lettori/Scrittori vista ad Architetture e Sistemi Operativi.
