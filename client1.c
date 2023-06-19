@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   
   while(1) {
     e = getline(&linea,&len,f);
-    int dimensione = (int) e;
+    int dimensione = e;
     assert(dimensione<Max_sequence_length);
     if(e==-1)
       break;
