@@ -15,7 +15,6 @@ logging.basicConfig(filename=os.path.basename('server.log'),
 
 
 def main(numt, numr, numw):
-  #per prima cosa apro le FIFO capolet e caposc
   #creo le pipe con nome
   if (not os.path.exists("capolet")) and (not os.path.exists("caposc")):
     try:
@@ -98,13 +97,13 @@ def gestisci_connessione(conn,addr,lockcapolet,lockcaposc,locklog,capolet,caposc
     data = recv_all(conn,4) #mi metto in attesa di 4 byte per vedere se il client è 1 o 2
     tipoconnessione = struct.unpack("!i",data)[0]
     if tipoconnessione==0:
-      #gestisco una connessione di tipo A, quindi riceverò solamente una sequenza di lunghezza in definita. il programma client1 farà poi un'altra connessione per la sequenza successiva
+      #gestisco una connessione di tipo A, quindi riceverò una volta sola dimensione e sequenza. il programma client1 farà poi un'altra connessione per la sequenza successiva
       recv_allc1(conn,lockcapolet,locklog,capolet)
     elif tipoconnessione==1:
       #gestisco una connessione di tipo B
-      #ora il c invia un insieme di sequenze
       recv_allc2(conn,lockcaposc,locklog,caposc)
     else:
+      #c'è qualcosa che non va
       raise socket.error 
 
 
@@ -116,8 +115,8 @@ def recv_allc1(conn,lockcapolet,locklog,capolet):
   #vado a scrivere in capolet prima dimensione_sequenza_da_decodificare, che occupa 4 byte, poi chunk che occupa dimensionesequenza byte. per questo serve un mutex mutexcapolet. poi acquisisco il mutex mutexlog per scrivere su server.log f"connessione A, {dimensionesequenza}"
   #scrivo sulla pipe
   lockcapolet.acquire()
-  b1 = os.write(capolet,dimensione_sequenza_da_decodificare)
-  b2 = os.write(capolet,chunk)
+  os.write(capolet,dimensione_sequenza_da_decodificare)
+  os.write(capolet,chunk)
   lockcapolet.release()
 
   #ho scritto sulla pipe, ora scrivo su server.log
@@ -139,7 +138,7 @@ def recv_allc2(conn,lockcaposc,locklog,caposc):
     
     #scrivo nella pipe
     lockcaposc.acquire()
-    b1 = os.write(caposc,dimensione_sequenza_da_decodificare)
+    os.write(caposc,dimensione_sequenza_da_decodificare)
     os.write(caposc,chunk)
     lockcaposc.release()
   
