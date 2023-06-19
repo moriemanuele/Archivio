@@ -33,7 +33,7 @@ void *tbody(void *argv) {
   char *linea = NULL;
   while(1) {
     e = getline(&linea,&len,f);
-    int dimensione = (int) e;
+    int dimensione = e;
     if(e==-1)
       break;
     assert(dimensione<Max_sequence_length);
@@ -61,7 +61,7 @@ void *tbody(void *argv) {
   e = readn(fd_skt, &numerosequenzedadecodificare, sizeof(numerosequenzedadecodificare));
   int numerosequenze = ntohl(numerosequenzedadecodificare);
   if(numerosequenze!=numerosequenzespedite)
-    fprintf(stderr,"Il numero di sequenze spedite da client2 è diverso dal numero di sequenze ricevute dal server\n");
+    xtermina("Il numero di sequenze spedite da client2 è diverso dal numero di sequenze ricevute dal server\n",qui);
   if(close(fd_skt)<0)
     xtermina("Errore chiusura socket",qui);
   free(linea);
