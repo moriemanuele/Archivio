@@ -13,7 +13,7 @@ Il primo blocco `with` non gestisce soltanto l'interruzione di una `KeyboardInte
 Infine, ho deciso che nonostante la scrittura sulle pipe e sul file `server.log` siano comandi svolti uno dopo l'altro, fosse buona pratica eseguire le due istruzioni con due lock differenti per rendere il programma il meno sequenziale possibile.
 Il modulo di logging è stato usato anche per gestire eventuali eccezioni.
 
-# client1 e client2
+# client1.c e client2.c
 I due programmi hanno un codice molto simile: entrambi prima spediscono il tipo di connessione, leggono da file usando la funzione `getline`, spediscono la dimensione della sequenza letta ed in seguito la sequenza stessa. Entrambi ricorrono a `writen` e `readn`, che per evitare di replicare codice sono dichiarate all'interno di `xerrori.c`.  `client2` una volta uscito dal while si mette in attesa di un intero, lo decodifica e verifica che sia uguale al numero di sequenze spedite.
 
 # altro
